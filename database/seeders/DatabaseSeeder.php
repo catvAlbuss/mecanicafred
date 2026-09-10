@@ -3,19 +3,18 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
     /**
      * Seed the application's database.
      */
     public function run(): void
     {
-        $this->call(RolePermissionSeeder::class);
+        $this->call([
+            RolePermissionSeeder::class,
+        ]);
 
         if (app()->environment('local')) {
             User::firstOrCreate(
@@ -26,6 +25,13 @@ class DatabaseSeeder extends Seeder
                     'email_verified_at' => now(),
                 ],
             )->assignRole('Administrador');
+
+            $this->call([
+                ProductCategorySeeder::class,
+                ProductSeeder::class,
+                SupplierSeeder::class,
+                PurchaseOrderSeeder::class,
+            ]);
         }
     }
 }

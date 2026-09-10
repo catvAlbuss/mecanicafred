@@ -180,4 +180,16 @@
     body {
         @apply bg-background text-foreground;
     }
+    select,
+    textarea {
+        @apply border-input bg-background text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50;
+    }
+    select option {
+        @apply bg-popover text-popover-foreground;
+    }
+    .dark select,
+    .dark input,
+    .dark textarea {
+        color-scheme: dark;
+    }
 }

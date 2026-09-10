@@ -10,43 +10,40 @@ use Spatie\Permission\PermissionRegistrar;
 
 class RolePermissionSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         $permissionNames = [
-            'usuarios.ver',
-            'usuarios.gestionar',
-            'clientes.ver',
-            'clientes.gestionar',
-            'vehiculos.ver',
-            'vehiculos.gestionar',
-            'ordenes-trabajo.ver',
-            'ordenes-trabajo.gestionar',
-            'inventario.ver',
-            'inventario.gestionar',
-            'reportes.ver',
+            'usuarios.ver', 'usuarios.gestionar',
+            'clientes.ver', 'clientes.gestionar',
+            'vehiculos.ver', 'vehiculos.gestionar',
+            'ordenes-trabajo.ver', 'ordenes-trabajo.gestionar',
+            'categorias.ver', 'categorias.gestionar',
+            'inventario.ver', 'inventario.gestionar', 'inventario.ajustar',
+            'proveedores.ver', 'proveedores.gestionar',
+            'consultas-proveedor.ver', 'consultas-proveedor.gestionar',
+            'pedidos-compra.ver', 'pedidos-compra.crear', 'pedidos-compra.aprobar',
+            'pedidos-compra.recibir', 'pedidos-compra.cancelar',
+            'historial-compras.ver', 'reportes.ver',
         ];
 
         $permissions = collect($permissionNames)
             ->map(fn (string $permissionName): PermissionContract => Permission::findOrCreate($permissionName, 'web'));
 
-        Role::findOrCreate('Administrador', 'web')
-            ->syncPermissions($permissions);
+        Role::findOrCreate('Administrador', 'web')->syncPermissions($permissions);
 
         Role::findOrCreate('Recepción', 'web')
             ->syncPermissions($permissions->whereIn('name', [
-                'clientes.ver',
-                'clientes.gestionar',
-                'vehiculos.ver',
-                'vehiculos.gestionar',
-                'ordenes-trabajo.ver',
-                'ordenes-trabajo.gestionar',
-                'inventario.ver',
-                'reportes.ver',
+                'clientes.ver', 'clientes.gestionar',
+                'vehiculos.ver', 'vehiculos.gestionar',
+                'ordenes-trabajo.ver', 'ordenes-trabajo.gestionar',
+                'categorias.ver', 'categorias.gestionar',
+                'inventario.ver', 'inventario.gestionar', 'inventario.ajustar',
+                'proveedores.ver', 'proveedores.gestionar',
+                'consultas-proveedor.ver', 'consultas-proveedor.gestionar',
+                'pedidos-compra.ver', 'pedidos-compra.crear', 'pedidos-compra.recibir',
+                'historial-compras.ver', 'reportes.ver',
             ]));
 
         Role::findOrCreate('Mecánico', 'web')

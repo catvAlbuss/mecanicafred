@@ -12,12 +12,20 @@ test('creates the workshop roles with their permissions', function () {
         'Administrador',
         'Mecánico',
         'Recepción',
-    ])->and(Permission::query()->count())->toBe(11)
-        ->and(Role::findByName('Administrador')->permissions)->toHaveCount(11)
-        ->and(Role::findByName('Recepción')->hasPermissionTo('clientes.gestionar'))->toBeTrue()
-        ->and(Role::findByName('Recepción')->hasPermissionTo('usuarios.gestionar'))->toBeFalse()
-        ->and(Role::findByName('Mecánico')->hasPermissionTo('ordenes-trabajo.gestionar'))->toBeTrue()
+    ])->and(Permission::query()->count())->toBe(24)
+        ->and(Role::findByName('Administrador')->permissions)->toHaveCount(24)
+        ->and(Role::findByName('Recepción')->hasPermissionTo('proveedores.gestionar'))->toBeTrue()
+        ->and(Role::findByName('Recepción')->hasPermissionTo('pedidos-compra.aprobar'))->toBeFalse()
+        ->and(Role::findByName('Mecánico')->hasPermissionTo('inventario.ver'))->toBeTrue()
         ->and(Role::findByName('Mecánico')->hasPermissionTo('inventario.gestionar'))->toBeFalse();
+});
+
+test('updates roles idempotently', function () {
+    $this->seed(RolePermissionSeeder::class);
+    $this->seed(RolePermissionSeeder::class);
+
+    expect(Role::query()->count())->toBe(3)
+        ->and(Permission::query()->count())->toBe(24);
 });
 
 test('grants every ability to administrators through the gate', function () {
