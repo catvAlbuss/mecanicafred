@@ -1,1 +1,0 @@
-import{g as e}from"./DialogTitle-pe0ZbhN5.js";import{Dn as t,Jt as n,Pt as r,Q as i,cr as a,lt as o,tn as s}from"./wayfinder-CFFIoNtG.js";var c=o({__name:`DialogClose`,props:{asChild:{type:Boolean},as:{}},setup(o){let c=o;return(o,l)=>(n(),i(a(e),r({"data-slot":`dialog-close`},c),{default:t(()=>[s(o.$slots,`default`)]),_:3},16))}});export{c as t};

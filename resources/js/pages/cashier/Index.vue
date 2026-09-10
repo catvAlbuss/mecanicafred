@@ -17,7 +17,6 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -78,6 +77,26 @@ const categoriesForType = computed(() =>
     ),
 );
 
+/**
+ * Abre el formulario de movimiento manual (dinero que entra o sale de la
+ * caja sin pasar por una venta: gastos del taller, ingresos externos, etc.).
+ */
+function openMovement(type: 'income' | 'expense'): void {
+    movementForm.clearErrors();
+    movementForm.type = type;
+    movementForm.amount = '';
+    movementForm.description = '';
+    movementForm.reference = '';
+    movementForm.category =
+        type === 'income' ? 'external_income' : 'operating_expense';
+    if (
+        !categoriesForType.value.some((c) => c.value === movementForm.category)
+    ) {
+        movementForm.category = categoriesForType.value[0]?.value ?? '';
+    }
+    movementOpen.value = true;
+}
+
 function submitOpen(): void {
     openForm.post(open.url(), { preserveScroll: true });
 }
@@ -106,19 +125,27 @@ function syncCategory(): void {
 </script>
 
 <template>
-
     <Head title="Caja" />
     <div class="flex flex-1 flex-col gap-6 p-4 sm:p-6 lg:p-8">
-        <section class="bg-racing-black relative overflow-hidden rounded-2xl p-6 text-white">
-            <div class="bg-racing-yellow/15 absolute -top-16 -right-12 size-48 rounded-full blur-3xl" />
-            <div class="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <section
+            class="bg-racing-black relative overflow-hidden rounded-2xl p-6 text-white"
+        >
+            <div
+                class="bg-racing-yellow/15 absolute -top-16 -right-12 size-48 rounded-full blur-3xl"
+            />
+            <div
+                class="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+            >
                 <div class="flex gap-4">
                     <span
-                        class="bg-racing-yellow text-racing-black flex size-12 shrink-0 items-center justify-center rounded-xl">
+                        class="bg-racing-yellow text-racing-black flex size-12 shrink-0 items-center justify-center rounded-xl"
+                    >
                         <Wallet />
                     </span>
                     <div>
-                        <p class="text-racing-yellow text-xs font-bold tracking-[.2em] uppercase">
+                        <p
+                            class="text-racing-yellow text-xs font-bold tracking-[.2em] uppercase"
+                        >
                             Tienda
                         </p>
                         <h1 class="text-2xl font-black sm:text-3xl">
@@ -134,12 +161,34 @@ function syncCategory(): void {
                     </div>
                 </div>
                 <div class="flex flex-wrap gap-2">
-                    <Button as-child variant="outline" class="text-racing-black">
-                        <Link :href="history()">
-                            <History />Historial
-                        </Link>
+                    <Button
+                        as-child
+                        variant="outline"
+                        class="text-racing-black"
+                    >
+                        <Link :href="history()"> <History />Historial </Link>
                     </Button>
-                    <Button v-if="register && can.sell" as-child class="bg-racing-yellow text-racing-black">
+                    <Button
+                        v-if="register && can.register_movement"
+                        variant="outline"
+                        class="border-racing-green text-racing-green hover:bg-racing-green/10"
+                        @click="openMovement('income')"
+                    >
+                        <ArrowDownLeft />Ingreso
+                    </Button>
+                    <Button
+                        v-if="register && can.register_movement"
+                        variant="outline"
+                        class="border-racing-red text-racing-red hover:bg-racing-red/10"
+                        @click="openMovement('expense')"
+                    >
+                        <ArrowUpRight />Gasto
+                    </Button>
+                    <Button
+                        v-if="register && can.sell"
+                        as-child
+                        class="bg-racing-yellow text-racing-black"
+                    >
                         <Link :href="newSale()">
                             <ShoppingBag />Nueva venta
                         </Link>
@@ -161,21 +210,39 @@ function syncCategory(): void {
                 {{ lastClosed.closed_at ? time(lastClosed.closed_at) : '—' }} ·
                 diferencia {{ money(lastClosed.difference) }}
             </p>
-            <form v-if="can.open" class="mt-5 grid gap-4 sm:max-w-md" @submit.prevent="submitOpen">
+            <form
+                v-if="can.open"
+                class="mt-5 grid gap-4 sm:max-w-md"
+                @submit.prevent="submitOpen"
+            >
                 <div class="grid gap-2">
                     <Label for="opening-amount">Monto de apertura</Label>
-                    <Input id="opening-amount" v-model="openForm.opening_amount" type="number" min="0" step="0.01"
-                        required />
+                    <Input
+                        id="opening-amount"
+                        v-model="openForm.opening_amount"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        required
+                    />
                     <InputError :message="openForm.errors.opening_amount" />
                 </div>
                 <div class="grid gap-2">
                     <Label for="opening-notes">Notas (opcional)</Label>
-                    <textarea id="opening-notes" v-model="openForm.notes" rows="2" maxlength="2000"
-                        class="rounded-md border px-3 py-2 text-sm" />
+                    <textarea
+                        id="opening-notes"
+                        v-model="openForm.notes"
+                        rows="2"
+                        maxlength="2000"
+                        class="rounded-md border px-3 py-2 text-sm"
+                    />
                     <InputError :message="openForm.errors.notes" />
                 </div>
-                <Button type="submit" :disabled="openForm.processing"
-                    class="bg-racing-yellow text-racing-black justify-self-start">
+                <Button
+                    type="submit"
+                    :disabled="openForm.processing"
+                    class="bg-racing-yellow text-racing-black justify-self-start"
+                >
                     <Wallet />Abrir caja
                 </Button>
             </form>
@@ -204,7 +271,9 @@ function syncCategory(): void {
                     </p>
                 </article>
                 <article class="bg-card rounded-2xl border p-4">
-                    <p class="text-racing-green flex items-center gap-1 text-xs uppercase">
+                    <p
+                        class="text-racing-green flex items-center gap-1 text-xs uppercase"
+                    >
                         <ArrowDownLeft class="size-3" />Ingresos
                     </p>
                     <p class="text-racing-green mt-1 text-2xl font-black">
@@ -212,7 +281,9 @@ function syncCategory(): void {
                     </p>
                 </article>
                 <article class="bg-card rounded-2xl border p-4">
-                    <p class="text-racing-red flex items-center gap-1 text-xs uppercase">
+                    <p
+                        class="text-racing-red flex items-center gap-1 text-xs uppercase"
+                    >
                         <ArrowUpRight class="size-3" />Egresos
                     </p>
                     <p class="text-racing-red mt-1 text-2xl font-black">
@@ -224,25 +295,56 @@ function syncCategory(): void {
             <section class="grid gap-6 lg:grid-cols-[1fr_20rem]">
                 <div class="grid gap-6">
                     <div class="bg-card overflow-hidden rounded-2xl border">
-                        <div class="flex flex-wrap items-center justify-between gap-3 p-5">
+                        <div
+                            class="flex flex-wrap items-center justify-between gap-3 p-5"
+                        >
                             <h2 class="font-black">Movimientos del turno</h2>
-                            <Dialog v-if="can.register_movement" v-model:open="movementOpen">
-                                <DialogTrigger as-child>
-                                    <Button variant="outline" size="sm">
-                                        <Plus />Registrar movimiento
-                                    </Button>
-                                </DialogTrigger>
+                            <Button
+                                v-if="can.register_movement"
+                                variant="outline"
+                                size="sm"
+                                @click="openMovement('expense')"
+                            >
+                                <Plus />Registrar movimiento
+                            </Button>
+                            <Dialog v-model:open="movementOpen">
                                 <DialogContent class="sm:max-w-md">
                                     <DialogHeader>
-                                        <DialogTitle>Movimiento de caja</DialogTitle>
+                                        <DialogTitle>
+                                            {{
+                                                movementForm.type === 'income'
+                                                    ? 'Registrar ingreso'
+                                                    : 'Registrar gasto'
+                                            }}
+                                        </DialogTitle>
                                     </DialogHeader>
-                                    <form class="grid gap-4" @submit.prevent="submitMovement">
+                                    <p
+                                        class="text-muted-foreground -mt-2 text-sm"
+                                    >
+                                        Dinero que
+                                        {{
+                                            movementForm.type === 'income'
+                                                ? 'entra'
+                                                : 'sale'
+                                        }}
+                                        de la caja sin pasar por una venta
+                                        (gastos del taller, ingresos por
+                                        servicios, retiros…).
+                                    </p>
+                                    <form
+                                        class="grid gap-4"
+                                        @submit.prevent="submitMovement"
+                                    >
                                         <div class="grid gap-2">
                                             <Label for="mv-type">Tipo</Label>
-                                            <select id="mv-type" v-model="movementForm.type"
-                                                class="h-9 rounded-md border px-3 text-sm" @change="syncCategory">
+                                            <select
+                                                id="mv-type"
+                                                v-model="movementForm.type"
+                                                class="h-9 rounded-md border px-3 text-sm"
+                                                @change="syncCategory"
+                                            >
                                                 <option value="expense">
-                                                    Egreso
+                                                    Gasto / egreso
                                                 </option>
                                                 <option value="income">
                                                     Ingreso
@@ -250,79 +352,145 @@ function syncCategory(): void {
                                             </select>
                                         </div>
                                         <div class="grid gap-2">
-                                            <Label for="mv-category">Categoría</Label>
-                                            <select id="mv-category" v-model="movementForm.category"
-                                                class="h-9 rounded-md border px-3 text-sm">
-                                                <option v-for="category in categoriesForType" :key="category.value"
-                                                    :value="category.value">
+                                            <Label for="mv-category"
+                                                >Categoría</Label
+                                            >
+                                            <select
+                                                id="mv-category"
+                                                v-model="movementForm.category"
+                                                class="h-9 rounded-md border px-3 text-sm"
+                                            >
+                                                <option
+                                                    v-for="category in categoriesForType"
+                                                    :key="category.value"
+                                                    :value="category.value"
+                                                >
                                                     {{ category.label }}
                                                 </option>
                                             </select>
-                                            <InputError :message="movementForm.errors.category
-                                                " />
+                                            <InputError
+                                                :message="
+                                                    movementForm.errors.category
+                                                "
+                                            />
                                         </div>
                                         <div class="grid gap-2">
-                                            <Label for="mv-method">Método</Label>
-                                            <select id="mv-method" v-model="movementForm.payment_method
-                                                " class="h-9 rounded-md border px-3 text-sm">
-                                                <option v-for="method in options.payment_methods" :key="method.value"
-                                                    :value="method.value">
+                                            <Label for="mv-method"
+                                                >Método</Label
+                                            >
+                                            <select
+                                                id="mv-method"
+                                                v-model="
+                                                    movementForm.payment_method
+                                                "
+                                                class="h-9 rounded-md border px-3 text-sm"
+                                            >
+                                                <option
+                                                    v-for="method in options.payment_methods"
+                                                    :key="method.value"
+                                                    :value="method.value"
+                                                >
                                                     {{ method.label }}
                                                 </option>
                                             </select>
                                         </div>
                                         <div class="grid gap-2">
                                             <Label for="mv-amount">Monto</Label>
-                                            <Input id="mv-amount" v-model="movementForm.amount" type="number" min="0.01"
-                                                step="0.01" required />
-                                            <InputError :message="movementForm.errors.amount
-                                                " />
+                                            <Input
+                                                id="mv-amount"
+                                                v-model="movementForm.amount"
+                                                type="number"
+                                                min="0.01"
+                                                step="0.01"
+                                                required
+                                            />
+                                            <InputError
+                                                :message="
+                                                    movementForm.errors.amount
+                                                "
+                                            />
                                         </div>
                                         <div class="grid gap-2">
-                                            <Label for="mv-desc">Descripción</Label>
-                                            <Input id="mv-desc" v-model="movementForm.description
-                                                " maxlength="200" required />
-                                            <InputError :message="movementForm.errors
-                                                    .description
-                                                " />
+                                            <Label for="mv-desc"
+                                                >Descripción</Label
+                                            >
+                                            <Input
+                                                id="mv-desc"
+                                                v-model="
+                                                    movementForm.description
+                                                "
+                                                maxlength="200"
+                                                required
+                                            />
+                                            <InputError
+                                                :message="
+                                                    movementForm.errors
+                                                        .description
+                                                "
+                                            />
                                         </div>
                                         <div class="grid gap-2">
-                                            <Label for="mv-ref">Referencia (opcional)</Label>
-                                            <Input id="mv-ref" v-model="movementForm.reference" maxlength="150"
-                                                placeholder="N° factura o guía" />
+                                            <Label for="mv-ref"
+                                                >Referencia (opcional)</Label
+                                            >
+                                            <Input
+                                                id="mv-ref"
+                                                v-model="movementForm.reference"
+                                                maxlength="150"
+                                                placeholder="N° factura o guía"
+                                            />
                                         </div>
-                                        <Button type="submit" :disabled="movementForm.processing"
-                                            class="bg-racing-yellow text-racing-black">Registrar</Button>
+                                        <Button
+                                            type="submit"
+                                            :disabled="movementForm.processing"
+                                            class="bg-racing-yellow text-racing-black"
+                                            >Registrar</Button
+                                        >
                                     </form>
                                 </DialogContent>
                             </Dialog>
                         </div>
-                        <div v-if="register.transactions.length" class="divide-y border-t">
-                            <article v-for="tx in register.transactions" :key="tx.id"
-                                class="flex items-center justify-between gap-3 px-5 py-3">
+                        <div
+                            v-if="register.transactions.length"
+                            class="divide-y border-t"
+                        >
+                            <article
+                                v-for="tx in register.transactions"
+                                :key="tx.id"
+                                class="flex items-center justify-between gap-3 px-5 py-3"
+                            >
                                 <div class="min-w-0">
                                     <p class="truncate font-bold">
                                         {{ tx.description }}
                                     </p>
-                                    <p class="text-muted-foreground truncate text-xs">
+                                    <p
+                                        class="text-muted-foreground truncate text-xs"
+                                    >
                                         {{ tx.category_label }} ·
                                         {{ tx.payment_method_label }} ·
                                         {{ tx.user_name }}
-                                        <span v-if="tx.reference">· {{ tx.reference }}</span>
+                                        <span v-if="tx.reference"
+                                            >· {{ tx.reference }}</span
+                                        >
                                     </p>
                                 </div>
-                                <p :class="[
-                                    'shrink-0 font-black',
-                                    tx.type === 'income'
-                                        ? 'text-racing-green'
-                                        : 'text-racing-red',
-                                ]">
+                                <p
+                                    :class="[
+                                        'shrink-0 font-black',
+                                        tx.type === 'income'
+                                            ? 'text-racing-green'
+                                            : 'text-racing-red',
+                                    ]"
+                                >
                                     {{ tx.type === 'income' ? '+' : '−'
                                     }}{{ money(tx.amount) }}
                                 </p>
                             </article>
                         </div>
-                        <p v-else class="text-muted-foreground border-t p-8 text-center text-sm">
+                        <p
+                            v-else
+                            class="text-muted-foreground border-t p-8 text-center text-sm"
+                        >
                             Todavía no hay movimientos en este turno.
                         </p>
                     </div>
@@ -335,40 +503,79 @@ function syncCategory(): void {
                             {{ money(register.summary.expected_cash) }}
                         </p>
                         <dl class="mt-4 grid gap-2 text-sm text-zinc-300">
-                            <div v-for="(row, key) in register.summary.by_method" :key="key"
-                                class="flex justify-between">
+                            <div
+                                v-for="(row, key) in register.summary.by_method"
+                                :key="key"
+                                class="flex justify-between"
+                            >
                                 <dt>{{ row.label }}</dt>
                                 <dd>
-                                    <span class="text-racing-green">+{{ money(row.in) }}</span>
+                                    <span class="text-racing-green"
+                                        >+{{ money(row.in) }}</span
+                                    >
                                     /
-                                    <span class="text-racing-red">−{{ money(row.out) }}</span>
+                                    <span class="text-racing-red"
+                                        >−{{ money(row.out) }}</span
+                                    >
                                 </dd>
                             </div>
                         </dl>
                     </div>
 
                     <div class="bg-card rounded-2xl border p-5">
-                        <Button v-if="can.close && !closing" variant="outline" class="w-full" @click="closing = true">
+                        <Button
+                            v-if="can.close && !closing"
+                            variant="outline"
+                            class="w-full"
+                            @click="closing = true"
+                        >
                             <Lock />Cerrar caja
                         </Button>
-                        <form v-else-if="closing" class="grid gap-3" @submit.prevent="submitClose">
+                        <form
+                            v-else-if="closing"
+                            class="grid gap-3"
+                            @submit.prevent="submitClose"
+                        >
                             <h2 class="font-black">Cierre de caja</h2>
                             <div class="grid gap-2">
                                 <Label for="counted">Efectivo contado</Label>
-                                <Input id="counted" v-model="closeForm.counted_cash_amount" type="number" min="0"
-                                    step="0.01" required />
-                                <InputError :message="closeForm.errors.counted_cash_amount
-                                    " />
+                                <Input
+                                    id="counted"
+                                    v-model="closeForm.counted_cash_amount"
+                                    type="number"
+                                    min="0"
+                                    step="0.01"
+                                    required
+                                />
+                                <InputError
+                                    :message="
+                                        closeForm.errors.counted_cash_amount
+                                    "
+                                />
                             </div>
                             <div class="grid gap-2">
                                 <Label for="closing-notes">Notas</Label>
-                                <textarea id="closing-notes" v-model="closeForm.notes" rows="2" maxlength="2000"
-                                    class="rounded-md border px-3 py-2 text-sm" />
+                                <textarea
+                                    id="closing-notes"
+                                    v-model="closeForm.notes"
+                                    rows="2"
+                                    maxlength="2000"
+                                    class="rounded-md border px-3 py-2 text-sm"
+                                />
                             </div>
                             <div class="flex gap-2">
-                                <Button type="submit" :disabled="closeForm.processing"
-                                    class="bg-racing-red text-white">Confirmar cierre</Button>
-                                <Button type="button" variant="ghost" @click="closing = false">Cancelar</Button>
+                                <Button
+                                    type="submit"
+                                    :disabled="closeForm.processing"
+                                    class="bg-racing-red text-white"
+                                    >Confirmar cierre</Button
+                                >
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    @click="closing = false"
+                                    >Cancelar</Button
+                                >
                             </div>
                         </form>
                         <p v-else class="text-muted-foreground text-sm">
