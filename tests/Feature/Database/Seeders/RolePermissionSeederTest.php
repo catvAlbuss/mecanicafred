@@ -12,8 +12,8 @@ test('creates the workshop roles with their permissions', function () {
         'Administrador',
         'Mecánico',
         'Recepción',
-    ])->and(Permission::query()->count())->toBe(24)
-        ->and(Role::findByName('Administrador')->permissions)->toHaveCount(24)
+    ])->and(Permission::query()->count())->toBe(31)
+        ->and(Role::findByName('Administrador')->permissions)->toHaveCount(31)
         ->and(Role::findByName('Recepción')->hasPermissionTo('proveedores.gestionar'))->toBeTrue()
         ->and(Role::findByName('Recepción')->hasPermissionTo('pedidos-compra.aprobar'))->toBeFalse()
         ->and(Role::findByName('Mecánico')->hasPermissionTo('inventario.ver'))->toBeTrue()
@@ -25,7 +25,7 @@ test('updates roles idempotently', function () {
     $this->seed(RolePermissionSeeder::class);
 
     expect(Role::query()->count())->toBe(3)
-        ->and(Permission::query()->count())->toBe(24);
+        ->and(Permission::query()->count())->toBe(31);
 });
 
 test('grants every ability to administrators through the gate', function () {

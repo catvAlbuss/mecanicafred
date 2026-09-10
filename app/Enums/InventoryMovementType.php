@@ -10,6 +10,8 @@ enum InventoryMovementType: string
     case AdjustmentOut = 'adjustment_out';
     case WorkshopConsumption = 'workshop_consumption';
     case SupplierReturn = 'supplier_return';
+    case Sale = 'sale';
+    case SaleReturn = 'sale_return';
 
     public function label(): string
     {
@@ -20,6 +22,8 @@ enum InventoryMovementType: string
             self::AdjustmentOut => 'Ajuste de salida',
             self::WorkshopConsumption => 'Consumo de taller',
             self::SupplierReturn => 'Devolución a proveedor',
+            self::Sale => 'Venta',
+            self::SaleReturn => 'Devolución de venta',
         };
     }
 }

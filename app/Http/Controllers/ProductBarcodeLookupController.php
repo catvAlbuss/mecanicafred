@@ -39,6 +39,7 @@ class ProductBarcodeLookupController extends Controller
             'unit_label' => $product->unit->label(),
             'current_stock' => $product->current_stock,
             'last_purchase_cost' => $product->last_purchase_cost,
+            'sale_price' => $product->sale_price,
             'is_active' => $product->is_active,
             'category_name' => $product->category->name,
         ]);

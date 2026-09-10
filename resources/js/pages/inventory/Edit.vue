@@ -14,19 +14,15 @@ defineOptions({
 });
 </script>
 <template>
+
     <Head :title="`Editar ${product.name}`" />
-    <div
-        class="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 p-4 sm:p-6 lg:p-8"
-    >
+    <div class="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 p-4 sm:p-6 lg:p-8">
         <header class="flex items-start gap-4">
-            <span
-                class="bg-racing-yellow text-racing-black flex size-12 items-center justify-center rounded-xl"
-                ><Pencil
-            /></span>
+            <span class="bg-racing-yellow text-racing-black flex size-12 items-center justify-center rounded-xl">
+                <Pencil />
+            </span>
             <div>
-                <p
-                    class="text-racing-yellow text-xs font-bold tracking-[.2em] uppercase"
-                >
+                <p class="text-racing-yellow text-xs font-bold tracking-[.2em] uppercase">
                     {{ product.sku }}
                 </p>
                 <h1 class="text-2xl font-black sm:text-3xl">
@@ -34,13 +30,7 @@ defineOptions({
                 </h1>
             </div>
         </header>
-        <ProductForm
-            :action="update.url(product.id)"
-            :cancel-href="show.url(product.id)"
-            submit-label="Guardar cambios"
-            :categories="categories"
-            :units="units"
-            :product="product"
-        />
+        <ProductForm :action="update.url(product.id)" :cancel-href="show.url(product.id)" submit-label="Guardar cambios"
+            :categories="categories" :units="units" :product="product" />
     </div>
 </template>

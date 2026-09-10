@@ -21,6 +21,7 @@ export type ProductSummary = {
     current_stock: string;
     location: string | null;
     last_purchase_cost: string | null;
+    sale_price: string | null;
     is_active: boolean;
     category: ProductCategory;
     stock_status: 'available' | 'low' | 'out';
@@ -51,6 +52,7 @@ export type ScannedProduct = {
     unit_label: string;
     current_stock: string;
     last_purchase_cost: string | null;
+    sale_price: string | null;
     is_active: boolean;
     category_name: string;
 };

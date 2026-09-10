@@ -30,6 +30,7 @@ class ProductFactory extends Factory
             'current_stock' => fake()->randomFloat(3, 10, 100),
             'location' => fake()->optional()->bothify('A-##'),
             'last_purchase_cost' => fake()->randomFloat(4, 5, 500),
+            'sale_price' => fake()->randomFloat(2, 10, 700),
             'is_active' => true,
         ];
     }

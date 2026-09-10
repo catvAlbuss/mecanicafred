@@ -29,7 +29,7 @@ class ProductController extends Controller
         $status = $request->string('status')->toString();
 
         $products = Product::query()
-            ->select(['id', 'product_category_id', 'sku', 'barcode', 'name', 'description', 'brand', 'unit', 'minimum_stock', 'current_stock', 'location', 'last_purchase_cost', 'is_active'])
+            ->select(['id', 'product_category_id', 'sku', 'barcode', 'name', 'description', 'brand', 'unit', 'minimum_stock', 'current_stock', 'location', 'last_purchase_cost', 'sale_price', 'is_active'])
             ->with(['category:id,name,type', 'media'])
             ->when($search !== '', function (Builder $query) use ($search): void {
                 $value = '%'.addcslashes($search, '%_\\').'%';
@@ -135,7 +135,7 @@ class ProductController extends Controller
     public function destroy(Product $product): RedirectResponse
     {
         Gate::authorize('delete', $product);
-        if ($product->inventoryMovements()->exists() || $product->suppliers()->exists() || $product->inquiryItems()->exists() || $product->purchaseOrderItems()->exists()) {
+        if ($product->inventoryMovements()->exists() || $product->suppliers()->exists() || $product->inquiryItems()->exists() || $product->purchaseOrderItems()->exists() || $product->saleItems()->exists()) {
             $product->update(['is_active' => false]);
             $message = 'El producto tiene historial y fue desactivado.';
         } else {
@@ -180,7 +180,7 @@ class ProductController extends Controller
         return ['id' => $product->id, 'product_category_id' => $product->product_category_id, 'sku' => $product->sku, 'barcode' => $product->barcode, 'name' => $product->name,
             'description' => $product->description, 'brand' => $product->brand, 'unit' => $product->unit->value, 'unit_label' => $product->unit->label(),
             'minimum_stock' => $product->minimum_stock, 'current_stock' => $product->current_stock, 'location' => $product->location,
-            'last_purchase_cost' => $product->last_purchase_cost, 'is_active' => $product->is_active,
+            'last_purchase_cost' => $product->last_purchase_cost, 'sale_price' => $product->sale_price, 'is_active' => $product->is_active,
             'category' => ['id' => $product->category->id, 'name' => $product->category->name, 'type' => $product->category->type->value, 'type_label' => $product->category->type->label()]];
     }
 

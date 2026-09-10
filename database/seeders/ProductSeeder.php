@@ -37,6 +37,7 @@ class ProductSeeder extends Seeder
                         'current_stock' => $product['current_stock'],
                         'location' => $product['location'],
                         'last_purchase_cost' => $product['last_purchase_cost'],
+                        'sale_price' => $this->suggestedSalePrice($product['last_purchase_cost']),
                         'is_active' => true,
                     ],
                 );
@@ -48,6 +49,17 @@ class ProductSeeder extends Seeder
                 $this->recordOpeningBalance($created);
             }
         }
+    }
+
+    /**
+     * A demo retail price: roughly a 45% margin over the last purchase cost,
+     * rounded up to the nearest 0.50.
+     */
+    private function suggestedSalePrice(float $cost): string
+    {
+        $withMargin = $cost * 1.45;
+
+        return number_format(ceil($withMargin * 2) / 2, 2, '.', '');
     }
 
     private function recordOpeningBalance(Product $product): void

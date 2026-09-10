@@ -425,6 +425,20 @@ stock en vivo → cantidad → agregar**.
 
 **Objetivo:** Control de caja diario, registro de ingresos/egresos, cobro de OT con ticket de pago (sin SUNAT por ahora).
 
+> **Estado: implementada como tienda el 10 de septiembre de 2026** (antes que las Fases 8–9, a pedido del cliente).
+> Se construyó el módulo de **caja + ventas de productos (POS)** sobre el inventario existente:
+>
+> - `sale_price` en `products` (editable en la ficha y por línea en la venta).
+> - Enums `CashRegisterStatus`, `CashTransactionType`, `CashTransactionCategory`, `PaymentMethod`, `SaleStatus`; `InventoryMovementType` sumó `sale` y `sale_return`.
+> - Tablas `cash_registers`, `cash_transactions` (inmutable, polimórfica vía `source`), `sales`, `sale_items` (inmutable).
+> - Acciones transaccionales: `OpenCashRegister`, `CloseCashRegister` (cuadre esperado vs. contado + diferencia), `RegisterCashTransaction`, `RegisterSale` (descuenta stock + movimientos + ingreso de caja, idempotente), `CancelSale` (repone stock + devolución en caja).
+> - Una sola caja abierta a la vez; vender o registrar movimientos exige caja abierta.
+> - Permisos `caja.ver|abrir|cerrar|registrar-movimiento`, `ventas.ver|registrar|anular` (Admin y Recepción).
+> - Pantallas: `cashier/Index` (caja del día), `cashier/History`, `sales/Index`, `sales/Create` (POS con escáner de cámara y buscador), `sales/Show` (ticket imprimible con `@media print`).
+> - Rutas `cashier.*` y `sales.*`; endpoint `sales.products.search` para el POS; el barcode lookup ahora devuelve `sale_price`.
+>
+> **Pendiente para cuando existan las Fases 8–9:** cobro de una OT completada (`WorkOrderPayment` + categoría `ServicePayment`) y el `PaymentModal` desde el detalle de la OT. El resto de esta sección queda como referencia de ese enganche.
+
 #### Modelo de datos
 
 ##### `cash_registers` [NEW]
@@ -528,6 +542,18 @@ Broadcasting: `CashTransactionRecorded` se transmite → si recepción tiene la 
 ### Fase 11 — Reservas Online y Portada Pública
 
 **Objetivo:** Landing page pública con calendario de disponibilidad y formulario de reserva. Panel interno para gestionar citas.
+
+> **Adelanto (10 de septiembre de 2026):** la **página de login** ya es una landing pública
+> de una sola página con scroll (`resources/js/pages/auth/Login.vue`, layout `BlankLayout`):
+> barra de anuncios, hero con el formulario de acceso integrado, servicios, ofertas con
+> precios, manifiesto, proceso, el taller, reseñas, contacto y footer. Responsive de 360 px
+> a escritorio, **modo claro/oscuro completo** (usa los tokens `background`/`card`/`muted`/
+> `foreground` y un botón de tema en la barra), contadores animados, marquesinas y botón
+> flotante de WhatsApp. Datos reales: Carretera Central paradero 15 – Huánuco, teléfonos
+> 930 955 836 y 902 465 531. `GET /` sigue redirigiendo a `/login`.
+> **Falta de esta fase:** modelo `appointments`, el calendario de disponibilidad, el
+> formulario de reserva real y el panel `/reservas`. La landing actual ya sirve de base
+> visual para cuando `GET /` pase a ser la portada con reservas.
 
 #### Modelo de datos
 
@@ -693,7 +719,7 @@ Parte de la **Fase 7** ya entregada (reportes de compras, consumo y reposición;
 |---|------|-----------|----------|
 | 1 | **Fase 8**: Clientes y Vehículos | — | Medio |
 | 2 | **Fase 9**: Plantillas + OT + Escáner + Broadcasting | Fase 8 | Alto |
-| 3 | **Fase 10**: Caja y Pagos + Ticket | Fase 9 | Medio |
+| 3 | **Fase 10**: Caja y Pagos + Ticket | Fase 9 | Medio — ✅ tienda hecha, falta cobro de OT |
 | 4 | **Fase 11**: Landing + Reservas | Fase 8 | Medio |
 | 5 | **Fase 12**: Notificaciones + Portal Cliente | Fases 8–9 | Medio |
 | 6 | **Fase 13**: Reportes y Dashboard integrales | Fases 8–10 | Medio |

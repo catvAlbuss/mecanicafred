@@ -68,22 +68,21 @@ function remove(category: Category): void {
 }
 </script>
 <template>
+
     <Head title="Categorías de inventario" />
     <div class="flex flex-1 flex-col gap-6 p-4 sm:p-6 lg:p-8">
-        <header
-            class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-        >
+        <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-start gap-4">
-                <Button as-child variant="outline" size="icon"
-                    ><Link :href="productsIndex()"><ArrowLeft /></Link></Button
-                ><span
-                    class="bg-racing-yellow text-racing-black flex size-10 items-center justify-center rounded-xl"
-                    ><Tags
-                /></span>
+                <Button as-child variant="outline" size="icon">
+                    <Link :href="productsIndex()">
+                        <ArrowLeft />
+                    </Link>
+                </Button><span
+                    class="bg-racing-yellow text-racing-black flex size-10 items-center justify-center rounded-xl">
+                    <Tags />
+                </span>
                 <div>
-                    <p
-                        class="text-racing-yellow text-xs font-bold tracking-[.2em] uppercase"
-                    >
+                    <p class="text-racing-yellow text-xs font-bold tracking-[.2em] uppercase">
                         Inventario
                     </p>
                     <h1 class="text-2xl font-black sm:text-3xl">Categorías</h1>
@@ -94,105 +93,66 @@ function remove(category: Category): void {
             </div>
         </header>
         <div class="grid gap-6 xl:grid-cols-[22rem_minmax(0,1fr)]">
-            <form
-                v-if="canManage"
-                class="bg-card h-fit rounded-2xl border p-5 xl:sticky xl:top-6"
-                @submit.prevent="submit"
-            >
+            <form v-if="canManage" class="bg-card h-fit rounded-2xl border p-5 xl:sticky xl:top-6"
+                @submit.prevent="submit">
                 <div class="flex items-center justify-between">
                     <h2 class="font-black">
                         {{ editingId ? 'Editar categoría' : 'Nueva categoría' }}
                     </h2>
-                    <Button
-                        v-if="editingId"
-                        type="button"
-                        size="icon"
-                        variant="ghost"
-                        @click="reset"
-                        ><X
-                    /></Button>
+                    <Button v-if="editingId" type="button" size="icon" variant="ghost" @click="reset">
+                        <X />
+                    </Button>
                 </div>
                 <div class="mt-5 grid gap-4">
                     <div class="grid gap-2">
-                        <Label for="name">Nombre</Label
-                        ><Input
-                            id="name"
-                            v-model="form.name"
-                            required
-                            maxlength="100"
-                        /><InputError :message="form.errors.name" />
+                        <Label for="name">Nombre</Label><Input id="name" v-model="form.name" required maxlength="100" />
+                        <InputError :message="form.errors.name" />
                     </div>
                     <div class="grid gap-2">
-                        <Label for="type">Tipo</Label
-                        ><select
-                            id="type"
-                            v-model="form.type"
-                            required
-                            class="border-input h-9 rounded-md border bg-transparent px-3 text-sm"
-                        >
+                        <Label for="type">Tipo</Label><select id="type" v-model="form.type" required
+                            class="border-input h-9 rounded-md border bg-transparent px-3 text-sm">
                             <option value="">Selecciona un tipo</option>
-                            <option
-                                v-for="type in types"
-                                :key="type.value"
-                                :value="type.value"
-                            >
+                            <option v-for="type in types" :key="type.value" :value="type.value">
                                 {{ type.label }}
-                            </option></select
-                        ><InputError :message="form.errors.type" />
+                            </option>
+                        </select>
+                        <InputError :message="form.errors.type" />
                     </div>
                     <div class="grid gap-2">
-                        <Label for="description">Descripción</Label
-                        ><textarea
-                            id="description"
-                            v-model="form.description"
-                            rows="3"
-                            maxlength="1000"
-                            class="border-input rounded-md border bg-transparent px-3 py-2 text-sm"
-                        /><InputError :message="form.errors.description" />
+                        <Label for="description">Descripción</Label><textarea id="description"
+                            v-model="form.description" rows="3" maxlength="1000"
+                            class="border-input rounded-md border bg-transparent px-3 py-2 text-sm" />
+                        <InputError :message="form.errors.description" />
                     </div>
-                    <label class="flex items-center gap-2 text-sm font-bold"
-                        ><input
-                            v-model="form.is_active"
-                            type="checkbox"
-                            class="accent-racing-green size-4"
-                        />Categoría activa</label
-                    ><Button
-                        type="submit"
-                        :disabled="form.processing"
-                        class="bg-racing-yellow text-racing-black"
-                        ><Pencil v-if="editingId" /><Plus v-else />{{
+                    <label class="flex items-center gap-2 text-sm font-bold"><input v-model="form.is_active"
+                            type="checkbox" class="accent-racing-green size-4" />Categoría activa</label><Button
+                        type="submit" :disabled="form.processing" class="bg-racing-yellow text-racing-black">
+                        <Pencil v-if="editingId" />
+                        <Plus v-else />{{
                             editingId
                                 ? 'Guardar cambios'
                                 : 'Registrar categoría'
-                        }}</Button
-                    >
+                        }}
+                    </Button>
                 </div>
             </form>
             <section class="grid gap-3 sm:grid-cols-2 2xl:grid-cols-3">
-                <article
-                    v-for="category in categories"
-                    :key="category.id"
-                    class="bg-card rounded-2xl border p-5"
-                >
+                <article v-for="category in categories" :key="category.id" class="bg-card rounded-2xl border p-5">
                     <div class="flex items-start justify-between gap-3">
                         <div>
                             <span
-                                class="bg-racing-yellow/15 text-racing-yellow rounded-full px-2 py-1 text-xs font-bold"
-                                >{{ category.type_label }}</span
-                            >
+                                class="bg-racing-yellow/15 text-racing-yellow rounded-full px-2 py-1 text-xs font-bold">{{
+                                category.type_label }}</span>
                             <h2 class="mt-3 font-black">{{ category.name }}</h2>
                         </div>
-                        <span
-                            :class="[
-                                'rounded-full px-2 py-1 text-xs font-bold',
-                                category.is_active
-                                    ? 'bg-racing-green/15 text-racing-green'
-                                    : 'bg-muted text-muted-foreground',
-                            ]"
-                            >{{
+                        <span :class="[
+                            'rounded-full px-2 py-1 text-xs font-bold',
+                            category.is_active
+                                ? 'bg-racing-green/15 text-racing-green'
+                                : 'bg-muted text-muted-foreground',
+                        ]">{{
                                 category.is_active ? 'Activa' : 'Inactiva'
-                            }}</span
-                        >
+                            }}</span>
                     </div>
                     <p class="text-muted-foreground mt-2 min-h-10 text-sm">
                         {{ category.description || 'Sin descripción.' }}
@@ -201,31 +161,18 @@ function remove(category: Category): void {
                         <strong>{{ category.products_count }}</strong> productos
                     </p>
                     <div v-if="canManage" class="mt-4 flex gap-2 border-t pt-4">
-                        <Button
-                            size="sm"
-                            variant="outline"
-                            @click="editCategory(category)"
-                            ><Pencil />Editar</Button
-                        ><Button
-                            size="sm"
-                            variant="outline"
-                            @click="toggle(category)"
-                            >{{
-                                category.is_active ? 'Desactivar' : 'Activar'
-                            }}</Button
-                        ><Button
-                            size="icon"
-                            variant="ghost"
-                            class="text-racing-red ml-auto"
-                            @click="remove(category)"
-                            ><Trash2
-                        /></Button>
+                        <Button size="sm" variant="outline" @click="editCategory(category)">
+                            <Pencil />Editar
+                        </Button><Button size="sm" variant="outline" @click="toggle(category)">{{
+                            category.is_active ? 'Desactivar' : 'Activar'
+                        }}</Button><Button size="icon" variant="ghost" class="text-racing-red ml-auto"
+                            @click="remove(category)">
+                            <Trash2 />
+                        </Button>
                     </div>
                 </article>
-                <div
-                    v-if="!categories.length"
-                    class="text-muted-foreground rounded-2xl border border-dashed p-10 text-center sm:col-span-2"
-                >
+                <div v-if="!categories.length"
+                    class="text-muted-foreground rounded-2xl border border-dashed p-10 text-center sm:col-span-2">
                     No hay categorías registradas.
                 </div>
             </section>

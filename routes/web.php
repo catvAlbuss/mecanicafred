@@ -1,6 +1,12 @@
 <?php
 
+use App\Http\Controllers\CashRegisterController;
+use App\Http\Controllers\CashRegisterHistoryController;
+use App\Http\Controllers\CashTransactionController;
+use App\Http\Controllers\CloseCashRegisterController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InventoryAdjustmentController;
+use App\Http\Controllers\OpenCashRegisterController;
 use App\Http\Controllers\ProductBarcodeLookupController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductCategoryStatusController;
@@ -13,6 +19,9 @@ use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\PurchaseOrderMediaController;
 use App\Http\Controllers\PurchaseOrderStatusController;
 use App\Http\Controllers\PurchaseReceiptController;
+use App\Http\Controllers\SaleCancellationController;
+use App\Http\Controllers\SaleController;
+use App\Http\Controllers\SaleProductSearchController;
 use App\Http\Controllers\SupplierCatalogController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\SupplierInquiryController;
@@ -27,7 +36,7 @@ use Illuminate\Support\Facades\Route;
 Route::redirect('/', '/login')->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'Dashboard')->name('dashboard');
+    Route::get('dashboard', DashboardController::class)->name('dashboard');
     Route::get('inventario', [ProductController::class, 'index'])->name('inventory.products.index');
     Route::get('inventario/codigo-barras', ProductBarcodeLookupController::class)->name('inventory.products.barcode.lookup');
     Route::resource('inventario/productos', ProductController::class)
@@ -62,6 +71,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('compras/pedidos', PurchaseOrderController::class)
         ->parameters(['pedidos' => 'purchaseOrder'])->names('purchases.orders');
     Route::get('compras/historial', PurchaseHistoryController::class)->name('purchases.history.index');
+
+    Route::get('caja', [CashRegisterController::class, 'index'])->name('cashier.index');
+    Route::get('caja/historial', CashRegisterHistoryController::class)->name('cashier.history');
+    Route::post('caja/abrir', OpenCashRegisterController::class)->name('cashier.open');
+    Route::post('caja/cerrar', CloseCashRegisterController::class)->name('cashier.close');
+    Route::post('caja/movimientos', [CashTransactionController::class, 'store'])->name('cashier.transactions.store');
+
+    Route::get('ventas', [SaleController::class, 'index'])->name('sales.index');
+    Route::get('ventas/buscar-productos', SaleProductSearchController::class)->name('sales.products.search');
+    Route::get('ventas/nueva', [SaleController::class, 'create'])->name('sales.create');
+    Route::post('ventas', [SaleController::class, 'store'])->name('sales.store');
+    Route::get('ventas/{sale}', [SaleController::class, 'show'])->name('sales.show');
+    Route::post('ventas/{sale}/anular', SaleCancellationController::class)->name('sales.cancel');
 });
 
 require __DIR__.'/settings.php';

@@ -5,8 +5,10 @@ import {
     ClipboardList,
     History,
     LayoutDashboard,
+    ShoppingBag,
     ShoppingCart,
     Truck,
+    Wallet,
 } from '@lucide/vue';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
@@ -22,10 +24,12 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import { index as cashier } from '@/routes/cashier';
 import { index as inventory } from '@/routes/inventory/products';
 import { index as purchaseHistory } from '@/routes/purchases/history';
 import { index as inquiries } from '@/routes/purchases/inquiries';
 import { index as orders } from '@/routes/purchases/orders';
+import { index as sales } from '@/routes/sales';
 import { index as suppliers } from '@/routes/suppliers';
 import type { NavItem } from '@/types';
 
@@ -46,6 +50,22 @@ const mainNavItems = computed<NavItem[]>(() => {
             title: 'Inventario',
             href: inventory(),
             icon: Boxes,
+        });
+    }
+
+    if (permissions.includes('ventas.ver')) {
+        items.push({
+            title: 'Ventas',
+            href: sales(),
+            icon: ShoppingBag,
+        });
+    }
+
+    if (permissions.includes('caja.ver')) {
+        items.push({
+            title: 'Caja',
+            href: cashier(),
+            icon: Wallet,
         });
     }
 

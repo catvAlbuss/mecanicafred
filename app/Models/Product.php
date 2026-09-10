@@ -29,6 +29,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
     'current_stock',
     'location',
     'last_purchase_cost',
+    'sale_price',
     'is_active',
 ])]
 class Product extends Model implements HasMedia
@@ -84,6 +85,12 @@ class Product extends Model implements HasMedia
         return $this->hasMany(PurchaseOrderItem::class);
     }
 
+    /** @return HasMany<SaleItem, $this> */
+    public function saleItems(): HasMany
+    {
+        return $this->hasMany(SaleItem::class);
+    }
+
     protected static function booted(): void
     {
         static::created(function (self $product): void {
@@ -131,6 +138,7 @@ class Product extends Model implements HasMedia
             'minimum_stock' => 'decimal:3',
             'current_stock' => 'decimal:3',
             'last_purchase_cost' => 'decimal:4',
+            'sale_price' => 'decimal:2',
             'is_active' => 'boolean',
         ];
     }

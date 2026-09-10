@@ -107,27 +107,12 @@ const totalWidth = computed(() => 95 * props.moduleWidth);
 
 <template>
     <figure v-if="digits" class="inline-flex flex-col items-center gap-1">
-        <svg
-            :width="totalWidth"
-            :height="height"
-            :viewBox="`0 0 ${totalWidth} ${height}`"
-            role="img"
-            :aria-label="`Código de barras EAN-13 ${value}`"
-            class="bg-white"
-        >
-            <rect
-                v-for="(bar, index) in bars"
-                :key="index"
-                :x="bar.x"
-                y="0"
-                :width="bar.width"
-                :height="height"
-                fill="#000"
-            />
+        <svg :width="totalWidth" :height="height" :viewBox="`0 0 ${totalWidth} ${height}`" role="img"
+            :aria-label="`Código de barras EAN-13 ${value}`" class="bg-white">
+            <rect v-for="(bar, index) in bars" :key="index" :x="bar.x" y="0" :width="bar.width" :height="height"
+                fill="#000" />
         </svg>
-        <figcaption
-            class="text-racing-black font-mono text-xs tracking-[.3em] tabular-nums"
-        >
+        <figcaption class="text-racing-black font-mono text-xs tracking-[.3em] tabular-nums">
             {{ value }}
         </figcaption>
     </figure>

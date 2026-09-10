@@ -26,6 +26,8 @@ class RolePermissionSeeder extends Seeder
             'pedidos-compra.ver', 'pedidos-compra.crear', 'pedidos-compra.aprobar',
             'pedidos-compra.recibir', 'pedidos-compra.cancelar',
             'historial-compras.ver', 'reportes.ver',
+            'caja.ver', 'caja.abrir', 'caja.cerrar', 'caja.registrar-movimiento',
+            'ventas.ver', 'ventas.registrar', 'ventas.anular',
         ];
 
         $permissions = collect($permissionNames)
@@ -44,6 +46,8 @@ class RolePermissionSeeder extends Seeder
                 'consultas-proveedor.ver', 'consultas-proveedor.gestionar',
                 'pedidos-compra.ver', 'pedidos-compra.crear', 'pedidos-compra.recibir',
                 'historial-compras.ver', 'reportes.ver',
+                'caja.ver', 'caja.abrir', 'caja.cerrar', 'caja.registrar-movimiento',
+                'ventas.ver', 'ventas.registrar', 'ventas.anular',
             ]));
 
         Role::findOrCreate('Mecánico', 'web')

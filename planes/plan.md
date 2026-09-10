@@ -100,6 +100,7 @@ Los nombres internos estarán en inglés y la interfaz en español, siguiendo la
 - `current_stock`
 - `location`, nullable
 - `last_purchase_cost`, nullable
+- `sale_price`, nullable — precio de venta al público (módulo de tienda)
 - `is_active`
 - timestamps
 
@@ -616,9 +617,13 @@ Una fase se considera completa cuando:
 
 - Envío automático real por WhatsApp o correo.
 - Facturación electrónica con SUNAT.
-- Pagos y cuentas por pagar.
-- Ventas a clientes.
+- Cuentas por pagar y conciliación bancaria.
 - Integración directa con sistemas de proveedores.
 - Aplicación móvil nativa.
+
+> **Actualización (10 de septiembre de 2026):** las **ventas a clientes** y el
+> **control de caja** sí se implementaron como el módulo de tienda descrito en la
+> **Fase 10** de [`implementation_plan_mecanica.md`](implementation_plan_mecanica.md).
+> El resto sigue fuera del alcance por ahora.
 
 Estas funciones podrán añadirse después sin cambiar el flujo central de inventario, pedidos y recepciones.

@@ -24,6 +24,7 @@ trait ProductValidationRules
             'current_stock' => ['prohibited'],
             'location' => ['nullable', 'string', 'max:100'],
             'last_purchase_cost' => ['nullable', 'decimal:0,4', 'min:0', 'max:9999999999.9999'],
+            'sale_price' => ['nullable', 'decimal:0,2', 'min:0', 'max:9999999999.99'],
             'is_active' => ['required', 'boolean'],
             'images' => ['nullable', 'array', 'max:5'],
             'images.*' => ['file', 'image', 'mimes:jpg,jpeg,png,webp', 'extensions:jpg,jpeg,png,webp', 'max:5120'],
