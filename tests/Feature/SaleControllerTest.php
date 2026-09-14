@@ -63,6 +63,20 @@ test('registers a sale, discounts stock and books the cash income', function () 
     $sale->items->each(fn ($item) => expect((float) $item->unit_cost)->toBeGreaterThan(0));
 });
 
+test('finds a product in sales by its alphanumeric barcode', function () {
+    $user = seller();
+    $product = Product::factory()->create([
+        'barcode' => 'ACEITE-10W40-A1',
+        'name' => 'Aceite de motor',
+    ]);
+
+    $this->actingAs($user)
+        ->getJson(route('sales.products.search', ['q' => 'ACEITE-10W40-A1']))
+        ->assertOk()
+        ->assertJsonPath('products.0.id', $product->id)
+        ->assertJsonPath('products.0.barcode', 'ACEITE-10W40-A1');
+});
+
 test('is idempotent on a retried submit', function () {
     $user = seller();
     CashRegister::factory()->create(['opened_by' => $user]);

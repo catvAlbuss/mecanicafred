@@ -67,6 +67,36 @@ test('creates a product with an exact opening movement and image', function () {
     $this->assertDatabaseHas('inventory_movements', ['product_id' => $product->id, 'type' => InventoryMovementType::OpeningBalance->value, 'quantity' => 8.500, 'stock_before' => 0, 'stock_after' => 8.500]);
 });
 
+test('creates a product with an alphanumeric Code 128 value', function () {
+    $manager = inventoryManager();
+    $category = ProductCategory::factory()->create(['is_active' => true]);
+
+    $response = $this->actingAs($manager)->post(
+        route('inventory.products.store'),
+        validProductPayload($category, ['barcode' => 'ACEITE-10W40-A1']),
+    );
+
+    $product = Product::query()->where('sku', 'FRE-001')->firstOrFail();
+    $response->assertRedirect(route('inventory.products.show', $product));
+    expect($product->barcode)->toBe('ACEITE-10W40-A1');
+});
+
+test('rejects a barcode that cannot be printed as Code 128', function () {
+    $manager = inventoryManager();
+    $category = ProductCategory::factory()->create(['is_active' => true]);
+
+    $this->actingAs($manager)
+        ->post(
+            route('inventory.products.store'),
+            validProductPayload($category, ['barcode' => 'ACEITE-Ñ']),
+        )
+        ->assertSessionHasErrors([
+            'barcode' => 'El código de barras solo puede contener letras, números, espacios y símbolos ASCII.',
+        ]);
+
+    expect(Product::query()->where('sku', 'FRE-001')->exists())->toBeFalse();
+});
+
 test('rejects invalid product images', function () {
     Storage::fake('public');
     $manager = inventoryManager();

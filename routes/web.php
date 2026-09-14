@@ -26,6 +26,7 @@ use App\Http\Controllers\SupplierCatalogController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\SupplierInquiryController;
 use App\Http\Controllers\SupplierInquiryConversionController;
+use App\Http\Controllers\SupplierInquiryExportController;
 use App\Http\Controllers\SupplierInquiryMediaController;
 use App\Http\Controllers\SupplierInquiryResponseController;
 use App\Http\Controllers\SupplierInquiryStatusController;
@@ -62,6 +63,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('compras/consultas/{inquiry}/estado', SupplierInquiryStatusController::class)->name('purchases.inquiries.status.update');
     Route::put('compras/consultas/{inquiry}/respuesta', SupplierInquiryResponseController::class)->name('purchases.inquiries.response.update');
     Route::post('compras/consultas/{inquiry}/convertir', SupplierInquiryConversionController::class)->name('purchases.inquiries.convert.store');
+    Route::get('compras/consultas/{inquiry}/exportar', SupplierInquiryExportController::class)->name('purchases.inquiries.export');
     Route::delete('compras/consultas/{inquiry}/archivos/{media}', SupplierInquiryMediaController::class)->name('purchases.inquiries.media.destroy');
     Route::resource('compras/consultas', SupplierInquiryController::class)
         ->parameters(['consultas' => 'inquiry'])->names('purchases.inquiries');

@@ -12,6 +12,7 @@ import {
 import { ref } from 'vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { index } from '@/routes/purchases/history';
 import { show } from '@/routes/purchases/orders';
 import type { HistoryPaginator, Option } from '@/types';
@@ -146,61 +147,80 @@ const money = (value: string) =>
             class="bg-card grid gap-3 rounded-2xl border p-4 md:grid-cols-2 xl:grid-cols-[minmax(13rem,1fr)_12rem_14rem_10rem_10rem_10rem_auto]"
             @submit.prevent="filter"
         >
-            <div class="relative">
-                <Search
-                    class="text-muted-foreground absolute top-2.5 left-3 size-4"
-                /><Input
-                    v-model="search"
-                    class="pl-9"
-                    placeholder="Pedido, proveedor o producto"
-                    aria-label="Buscar historial"
-                />
+            <div class="grid gap-2">
+                <Label for="history-search">Buscar</Label>
+                <div class="relative">
+                    <Search
+                        class="text-muted-foreground absolute top-2.5 left-3 size-4"
+                    />
+                    <Input
+                        id="history-search"
+                        v-model="search"
+                        class="pl-9"
+                        placeholder="Pedido, proveedor o producto"
+                    />
+                </div>
             </div>
-            <select
-                v-model="supplier"
-                class="h-9 rounded-md border px-3 text-sm"
-                aria-label="Proveedor"
-            >
-                <option value="">Todos los proveedores</option>
-                <option
-                    v-for="item in suppliers"
-                    :key="item.id"
-                    :value="item.id"
+            <div class="grid gap-2">
+                <Label for="history-supplier">Proveedor</Label>
+                <select
+                    id="history-supplier"
+                    v-model="supplier"
+                    class="h-9 min-w-0 rounded-md border px-3 text-sm"
                 >
-                    {{ item.name }}
-                </option></select
-            ><select
-                v-model="product"
-                class="h-9 rounded-md border px-3 text-sm"
-                aria-label="Producto"
-            >
-                <option value="">Todos los productos</option>
-                <option
-                    v-for="item in products"
-                    :key="item.id"
-                    :value="item.id"
+                    <option value="">Todos los proveedores</option>
+                    <option
+                        v-for="item in suppliers"
+                        :key="item.id"
+                        :value="item.id"
+                    >
+                        {{ item.name }}
+                    </option>
+                </select>
+            </div>
+            <div class="grid gap-2">
+                <Label for="history-product">Producto</Label>
+                <select
+                    id="history-product"
+                    v-model="product"
+                    class="h-9 min-w-0 rounded-md border px-3 text-sm"
                 >
-                    {{ item.name }}
-                </option></select
-            ><select
-                v-model="status"
-                class="h-9 rounded-md border px-3 text-sm"
-                aria-label="Estado"
-            >
-                <option value="">Todos los estados</option>
-                <option
-                    v-for="item in statuses"
-                    :key="item.value"
-                    :value="item.value"
+                    <option value="">Todos los productos</option>
+                    <option
+                        v-for="item in products"
+                        :key="item.id"
+                        :value="item.id"
+                    >
+                        {{ item.name }}
+                    </option>
+                </select>
+            </div>
+            <div class="grid gap-2">
+                <Label for="history-status">Estado</Label>
+                <select
+                    id="history-status"
+                    v-model="status"
+                    class="h-9 min-w-0 rounded-md border px-3 text-sm"
                 >
-                    {{ item.label }}
-                </option></select
-            ><Input v-model="from" type="date" aria-label="Desde" /><Input
-                v-model="to"
-                type="date"
-                aria-label="Hasta"
-            />
-            <div class="flex gap-2">
+                    <option value="">Todos los estados</option>
+                    <option
+                        v-for="item in statuses"
+                        :key="item.value"
+                        :value="item.value"
+                    >
+                        {{ item.label }}
+                    </option>
+                </select>
+            </div>
+            <div class="grid gap-2">
+                <Label for="history-from">Desde</Label>
+                <Input id="history-from" v-model="from" type="date" />
+            </div>
+            <div class="grid gap-2">
+                <Label for="history-to">Hasta</Label>
+                <Input id="history-to" v-model="to" type="date" />
+            </div>
+            <div class="flex items-end gap-2">
                 <Button type="submit">Filtrar</Button
                 ><Button type="button" variant="outline" @click="clearFilters"
                     >Limpiar</Button

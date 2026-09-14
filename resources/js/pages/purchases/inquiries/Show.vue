@@ -4,6 +4,7 @@ import {
     ArrowLeft,
     Check,
     ClipboardCheck,
+    Download,
     FileText,
     Pencil,
     Send,
@@ -15,7 +16,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import InputError from '@/components/InputError.vue';
-import { destroy, edit, index } from '@/routes/purchases/inquiries';
+import {
+    destroy,
+    edit,
+    exportMethod as exportInquiry,
+    index,
+} from '@/routes/purchases/inquiries';
 import { store as convert } from '@/routes/purchases/inquiries/convert';
 import { destroy as destroyMedia } from '@/routes/purchases/inquiries/media';
 import { update as respond } from '@/routes/purchases/inquiries/response';
@@ -107,6 +113,11 @@ const money = (value: string | null) =>
                 </div>
             </div>
             <div class="flex flex-wrap gap-2">
+                <Button as-child variant="outline">
+                    <a :href="exportInquiry.url(inquiry.id)" download>
+                        <Download />Exportar Excel
+                    </a>
+                </Button>
                 <Button v-if="canEdit" as-child variant="outline"
                     ><Link :href="edit(inquiry.id)"
                         ><Pencil />Editar</Link

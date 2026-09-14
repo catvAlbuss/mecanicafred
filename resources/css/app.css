@@ -192,4 +192,9 @@
     .dark textarea {
         color-scheme: dark;
     }
+    :root:not(.dark) select,
+    :root:not(.dark) input,
+    :root:not(.dark) textarea {
+        color-scheme: light;
+    }
 }

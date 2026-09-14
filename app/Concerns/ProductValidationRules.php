@@ -14,7 +14,7 @@ trait ProductValidationRules
         return [
             'product_category_id' => ['required', 'integer', Rule::exists('product_categories', 'id')->where('is_active', true)],
             'sku' => ['required', 'string', 'max:50', Rule::unique('products', 'sku')->ignore($product)],
-            'barcode' => ['nullable', 'string', 'max:32', Rule::unique('products', 'barcode')->ignore($product)],
+            'barcode' => ['nullable', 'string', 'max:32', 'regex:/\A[\x20-\x7E]+\z/', Rule::unique('products', 'barcode')->ignore($product)],
             'name' => ['required', 'string', 'max:150'],
             'description' => ['nullable', 'string', 'max:2000'],
             'brand' => ['nullable', 'string', 'max:100'],
@@ -28,6 +28,14 @@ trait ProductValidationRules
             'is_active' => ['required', 'boolean'],
             'images' => ['nullable', 'array', 'max:5'],
             'images.*' => ['file', 'image', 'mimes:jpg,jpeg,png,webp', 'extensions:jpg,jpeg,png,webp', 'max:5120'],
+        ];
+    }
+
+    /** @return array<string, string> */
+    public function messages(): array
+    {
+        return [
+            'barcode.regex' => 'El código de barras solo puede contener letras, números, espacios y símbolos ASCII.',
         ];
     }
 }
